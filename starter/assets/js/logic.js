@@ -82,23 +82,26 @@ function startQuiz(){
 
 }
 
-    function startTimer(duration, display){
-        let timerLeft = duration;
-        let interval = setInterval(function() {
-            seconds = timer;
-        display.textContent= `${timeLeft} seconds left`;
+let timeLeft; // Global variable for the timer
 
-        if (timer-- <= 0){
+function startTimer(duration, display) {
+    timeLeft = duration; // Initialize timeLeft
+    let interval = setInterval(function() {
+        display.textContent = `${timeLeft} seconds left`;
+
+        if (timeLeft <= 0) {
             clearInterval(interval);
-            alert ('Time is up!');
-
+            alert('Time is up!');
         }
-        }, 1000);
-    }
+
+        timeLeft--;
+    }, 1000);
+}
 
 
 function showQuestion(){
     resetState();
+
     const currentQuestion = allQuestions[currentQuestionIndex];
     questionTitles.innerHTML =(currentQuestionIndex + 1) + ". " + currentQuestion.question;
 
@@ -113,9 +116,24 @@ function showQuestion(){
     });
 }
 
+function showQuestion() {
+    resetState();
+    const currentQuestion = allQuestions[currentQuestionIndex];
+    questionTitles.innerHTML = (currentQuestionIndex + 1) + ". " + currentQuestion.question;
+
+    currentQuestion.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.innerHTML = answer.text;
+        button.classList.add("btn");
+        button.dataset.correct = answer.correct; 
+        questionAnswers.appendChild(button);
+        button.addEventListener("click", selectAnswer);
+    });
+}
+
 function resetState() {
     while (questionAnswers.firstChild) {
-        questionAnswers.removeChild(questionAnswer.firstChild)
+        questionAnswers.removeChild(questionAnswers.firstChild)
     }
 }
 
@@ -127,6 +145,7 @@ function resetState() {
   // If incorrect, tell them AND subtract time from the timer
   // Optional: play a sound for correct or incorrect
   // Either way, the question disappears after a few seconds and the next question appears
+  
 
 function selectAnswer(e){
     const selectedBtn = e.target;
@@ -144,8 +163,9 @@ function selectAnswer(e){
     }
 
         setTimeout(() => {
+            result.textContent = ''; 
             showNextQuestion();
-        }, 3000);
+        }, 1000);
     } 
 
     
