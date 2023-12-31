@@ -1,5 +1,5 @@
 // Set of questions --> array of objects
-const timer = document.getElementByClass("timer")
+const timerDisplay = document.getElementsByClassName("timer")[0]
 const startButton = document.getElementById("start")
 const questions = document.getElementById("questions")
 const questionTitles = document.getElementById("question-title")
@@ -9,15 +9,16 @@ const submitButton = document.getElementById("submit")
 const Winner = document.getElementById("initials")
 
 
+let currentQuestionIndex = 0;
 
-// Each question needs the following:
+// Each question with the following info:
   // Question text
   // Set of answers
   // Which answer is correct
 
   const allQuestions = [
     {
-        questions: "What is 2+4?",
+        question: "What is 2+4?",
         answers: [
             {text: "6", correct :true},
             {text: "8", correct :false},
@@ -26,7 +27,7 @@ const Winner = document.getElementById("initials")
         ]
 },
 {
-    questions: "What is 2X4?",
+    question: "What is 2X4?",
     answers: [
         {text: "6", correct :false},
         {text: "8", correct :true},
@@ -35,7 +36,7 @@ const Winner = document.getElementById("initials")
     ]
 },
 {
-    questions: "What is 4 divided by 2?",
+    question: "What is 4 divided by 2?",
     answers: [
         {text: "6", correct :false},
         {text: "8", correct :false},
@@ -44,7 +45,7 @@ const Winner = document.getElementById("initials")
     ]
 },
 {
-    questions: "What is 4 minus 2?",
+    question: "What is 4 minus 2?",
     answers: [
         {text: "6", correct :false},
         {text: "2", correct :true},
@@ -53,14 +54,14 @@ const Winner = document.getElementById("initials")
     ]
 },
 {
-    questions: "What is 4 times 2?",
+    question: "What is 4 times 2?",
     answers: [
         {text: "6", correct :false},
         {text: "8", correct :true},
         {text: "2", correct :false},
         {text: "4", correct :false},
     ]
-},
+}]
 
 // Landing page:
   // Explanation of the quiz
@@ -72,27 +73,22 @@ const Winner = document.getElementById("initials")
   // Timer starts
   // The first question appears (with its answers)
 
-function startQuiz(e){
+function startQuiz(){
     currentQuestionIndex = 0;
-    startButton = e.target;
-    startButton.addEventListener('click', showQuestion, startTimer);
-
-    function (){
-        let sixtySeconds =59;
-        let display = document.getElementById('timer');
-        startTimer(sixtySeconds, display);
-    } )
+    document.getElementById('start-screen').style.display = 'none';
+    questions.style.display = 'block';
+    startTimer (60, timerDisplay);
+    showQuestion();
 
 }
 
-    funtion startTimer(duration, time){
-        let timer = duration, seconds;
-        let interval = setInterval(function(){
-            seconds = parseInt(timer % 60,10);
-        const time = document.getElementById("#time");
-        time.textContent= `${seconds} seconds left`;
+    function startTimer(duration, display){
+        let timerLeft = duration;
+        let interval = setInterval(function() {
+            seconds = timer;
+        display.textContent= `${timeLeft} seconds left`;
 
-        if (--timer<0){
+        if (timer-- <= 0){
             clearInterval(interval);
             alert ('Time is up!');
 
@@ -103,29 +99,26 @@ function startQuiz(e){
 
 function showQuestion(){
     resetState();
-    let currentQuestion = questions[currentQuestionIndex];
-    let questionNum = currentQuestionIndex + 1;
-    questionElement.innerHTML = questionNum + "." +currentQuestion.question;
+    const currentQuestion = allQuestions[currentQuestionIndex];
+    questionTitles.innerHTML =(currentQuestionIndex + 1) + ". " + currentQuestion.question;
 
-    currentQuestions.answers.forEach(answer => {
+
+    currentQuestion.answers.forEach(answers => {
         const button = document.createElement("button");
-        button.innerHTML = answer.text;
+        button.innerHTML = answers.text;
         button.classList.add("btn");
+        button.dataset.correct = answers.correct; 
         questionAnswers.appendChild(button);
-        if (answer,correct){
-            button.dataset.correct = answer.correct;
-        }
         button.addEventListener ("click", selectAnswer);
-
     });
 }
 
-function resetState(){
-    nextButton.style.display = "none";
-    while (answerButtons.firstChild){
-        answerButtons.removeChild(answerButtons.firstChild);
+function resetState() {
+    while (questionAnswers.firstChild) {
+        questionAnswers.removeChild(questionAnswer.firstChild)
     }
 }
+
 
 // For each question:
   // User clicks an answer
@@ -137,28 +130,35 @@ function resetState(){
 
 function selectAnswer(e){
     const selectedBtn = e.target;
-    const result = document.getElementById("result")
-    const isCorrect = selctedBtn.dataset.correct ==="true";
+    const isCorrect = selectedBtn.dataset.correct === "true";
+    const result = document.getElementById("result");
+   
     if(isCorrect){
-        selectedBtn.classList.add ("correct");
+        selectedBtn.classList.add("correct");
         result.textContent = "Correct!"
     }else{
-        selectedBtn.classList.add ("incorrect");
+        selectedBtn.classList.add("incorrect");
         result.textContent = "Incorrect!"
-        timer = timer - 100;
+
+        timeLeft = Math.max(timeLeft - 10, 0);
+    }
+
+        setTimeout(() => {
+            showNextQuestion();
+        }, 3000);
     } 
 
     
-    setTimeout(function() {
-        let nextQuestionNum = currentQuestionIndex + 1;
-        let nextElem = document.getElementById('question' + nextQuestionNum);
-        if (nextElem) {
-            nextElem.style.display = 'block';
+    function showNextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < allQuestions.length) {
+            showQuestion();
         } else {
-            alert("End of Quiz");
+            endQuiz();
         }
-    }, 3000);
-}
+    }
+
+startButton.addEventListener('click', startQuiz);
 
 
 // After the last question:
