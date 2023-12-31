@@ -1,5 +1,5 @@
 // Set of questions --> array of objects
-const timer = document.getElementById("time")
+const timer = document.getElementByClass("timer")
 const startButton = document.getElementById("start")
 const questions = document.getElementById("questions")
 const questionTitles = document.getElementById("question-title")
@@ -15,7 +15,7 @@ const Winner = document.getElementById("initials")
   // Set of answers
   // Which answer is correct
 
-  const questions = [
+  const allQuestions = [
     {
         questions: "What is 2+4?",
         answers: [
@@ -72,12 +72,34 @@ const Winner = document.getElementById("initials")
   // Timer starts
   // The first question appears (with its answers)
 
-fuction startQuiz(e){
+function startQuiz(e){
     currentQuestionIndex = 0;
-    timer = 60000;
     startButton = e.target;
-    showQuestion();
+    startButton.addEventListener('click', showQuestion, startTimer);
+
+    function (){
+        let sixtySeconds =59;
+        let display = document.getElementById('timer');
+        startTimer(sixtySeconds, display);
+    } )
+
 }
+
+    funtion startTimer(duration, time){
+        let timer = duration, seconds;
+        let interval = setInterval(function(){
+            seconds = parseInt(timer % 60,10);
+        const time = document.getElementById("#time");
+        time.textContent= `${seconds} seconds left`;
+
+        if (--timer<0){
+            clearInterval(interval);
+            alert ('Time is up!');
+
+        }
+        }, 1000);
+    }
+
 
 function showQuestion(){
     resetState();
@@ -91,7 +113,7 @@ function showQuestion(){
         button.classList.add("btn");
         questionAnswers.appendChild(button);
         if (answer,correct){
-            button.dataset,correct = answer.correct;
+            button.dataset.correct = answer.correct;
         }
         button.addEventListener ("click", selectAnswer);
 
@@ -105,9 +127,17 @@ function resetState(){
     }
 }
 
+// For each question:
+  // User clicks an answer
+  // Their choice is compared to the correct answer as stored in the question's object
+  // If correct, tell them
+  // If incorrect, tell them AND subtract time from the timer
+  // Optional: play a sound for correct or incorrect
+  // Either way, the question disappears after a few seconds and the next question appears
+
 function selectAnswer(e){
-    const selctedBtn = e.target;
-    const result = getElementById("result")
+    const selectedBtn = e.target;
+    const result = document.getElementById("result")
     const isCorrect = selctedBtn.dataset.correct ==="true";
     if(isCorrect){
         selectedBtn.classList.add ("correct");
@@ -117,6 +147,8 @@ function selectAnswer(e){
         result.textContent = "Incorrect!"
         timer = timer - 100;
     } 
+
+    
     setTimeout(function() {
         let nextQuestionNum = currentQuestionIndex + 1;
         let nextElem = document.getElementById('question' + nextQuestionNum);
@@ -129,19 +161,12 @@ function selectAnswer(e){
 }
 
 
-// For each question:
-  // User clicks an answer
-  // Their choice is compared to the correct answer as stored in the question's object
-  // If correct, tell them
-  // If incorrect, tell them AND subtract time from the timer
-  // Optional: play a sound for correct or incorrect
-  // Either way, the question disappears after a few seconds and the next question appears
-
 // After the last question:
   // Timer stops
   // Question disappears
   // Form appears for user to enter their initials
   // Display their score
+
 
 // User submits form
   // Initials and score get stored in local storage
