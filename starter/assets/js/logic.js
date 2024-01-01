@@ -1,12 +1,12 @@
 // Set of questions --> array of objects
-const timerDisplay = document.getElementsByClassName("timer")[0]
+const timerDisplay = document.querySelector(".timer span")
 const startButton = document.getElementById("start")
 const questions = document.getElementById("questions")
 const questionTitles = document.getElementById("question-title")
 const questionAnswers = document.getElementById("choices")
 const finalScore = document.getElementById("final-score")
 const submitButton = document.getElementById("submit")
-const Winner = document.getElementById("initials")
+const initialsInput = document.getElementById("initials")
 
 
 let currentQuestionIndex = 0;
@@ -82,16 +82,18 @@ function startQuiz(){
 
 }
 
-let timeLeft; // Global variable for the timer
+let timeLeft; 
+let timerInterval;
 
 function startTimer(duration, display) {
     timeLeft = duration; // Initialize timeLeft
-    let interval = setInterval(function() {
+    timerInterval = setInterval(function() {
         display.textContent = `${timeLeft} seconds left`;
 
         if (timeLeft <= 0) {
             clearInterval(interval);
             alert('Time is up!');
+            endQuiz();
         }
 
         timeLeft--;
@@ -99,22 +101,6 @@ function startTimer(duration, display) {
 }
 
 
-function showQuestion(){
-    resetState();
-
-    const currentQuestion = allQuestions[currentQuestionIndex];
-    questionTitles.innerHTML =(currentQuestionIndex + 1) + ". " + currentQuestion.question;
-
-
-    currentQuestion.answers.forEach(answers => {
-        const button = document.createElement("button");
-        button.innerHTML = answers.text;
-        button.classList.add("btn");
-        button.dataset.correct = answers.correct; 
-        questionAnswers.appendChild(button);
-        button.addEventListener ("click", selectAnswer);
-    });
-}
 
 function showQuestion() {
     resetState();
@@ -143,7 +129,6 @@ function resetState() {
   // Their choice is compared to the correct answer as stored in the question's object
   // If correct, tell them
   // If incorrect, tell them AND subtract time from the timer
-  // Optional: play a sound for correct or incorrect
   // Either way, the question disappears after a few seconds and the next question appears
   
 
@@ -168,24 +153,46 @@ function selectAnswer(e){
         }, 1000);
     } 
 
-    
-    function showNextQuestion() {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < allQuestions.length) {
-            showQuestion();
-        } else {
-            endQuiz();
-        }
-    }
-
-startButton.addEventListener('click', startQuiz);
 
 
+  
 // After the last question:
   // Timer stops
   // Question disappears
   // Form appears for user to enter their initials
   // Display their score
+
+
+
+
+function endQuiz() {
+    clearInterval(timerInterval);
+    questions.style.display = 'none';
+
+    const endScreen = document.getElementById("end-screen");
+    endScreen.style.display = "block";
+    finalScore.innerHTML = timeLeft; // Corrected variable name
+
+    initialsInput.addEventListener("input", function() {
+        // Handle user input (if needed)
+    });
+
+    submitButton.addEventListener("click", function() {
+    });
+}
+
+      
+function showNextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < allQuestions.length) {
+        showQuestion();
+    } else {
+        endQuiz();
+    }
+}
+
+startButton.addEventListener('click', startQuiz);
+
 
 
 // User submits form
