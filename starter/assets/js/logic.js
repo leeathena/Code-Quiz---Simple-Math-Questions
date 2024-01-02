@@ -63,15 +63,10 @@ let currentQuestionIndex = 0;
     ]
 }]
 
-// Landing page:
+// Landing page to start quiz:
   // Explanation of the quiz
   // Start button
 
-
-// Click the start button:
-  // Landing page goes away
-  // Timer starts
-  // The first question appears (with its answers)
 
 function startQuiz(){
     currentQuestionIndex = 0;
@@ -82,6 +77,9 @@ function startQuiz(){
 
 }
 
+//Timer
+    //Show time left
+    //end quiz when out of time
 let timeLeft; 
 let timerInterval;
 
@@ -99,7 +97,7 @@ function startTimer(duration, display) {
     }, 1000);
 }
 
-
+//Show first question
 
 function showQuestion() {
     resetState();
@@ -149,10 +147,18 @@ function selectAnswer(e){
         setTimeout(() => {
             result.textContent = ''; 
             showNextQuestion();
-        }, 1000);
+        }, 2000);
     } 
 
-
+      
+function showNextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < allQuestions.length) {
+        showQuestion();
+    } else {
+        endQuiz();
+    }
+}
 
   
 // After the last question:
@@ -160,9 +166,6 @@ function selectAnswer(e){
   // Question disappears
   // Form appears for user to enter their initials
   // Display their score
-
-
-
 
   function endQuiz() {
     clearInterval(timerInterval);
@@ -182,15 +185,6 @@ function selectAnswer(e){
                 playerInitials: playerInitials,
                 score: timeLeft
             };
-
-             // Clear the "highScores" key
-             localStorage.removeItem("highScores");
-            
-             const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
-             highScores.push(scoreData);
-             highScores.sort((a, b) => b.score - a.score);
-             localStorage.setItem("highScores", JSON.stringify(highScores));
- 
              window.location.href = "highscores.html";
          } else {
              alert("Initials cannot be blank.");
@@ -198,22 +192,11 @@ function selectAnswer(e){
      });
  }
  
-
-      
-function showNextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < allQuestions.length) {
-        showQuestion();
-    } else {
-        endQuiz();
-    }
-}
-
-
+// Click the start button to start quiz
 
 startButton.addEventListener("click", startQuiz);
 
 
 
-//   highScoresList.innerHTML = highScores.map(score => `<li>${score.initials}: ${score.score}</li>`).join("");
+
 
