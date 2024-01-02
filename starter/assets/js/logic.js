@@ -86,13 +86,12 @@ let timeLeft;
 let timerInterval;
 
 function startTimer(duration, display) {
-    timeLeft = duration; // Initialize timeLeft
+    timeLeft = duration;
     timerInterval = setInterval(function() {
         display.textContent = `${timeLeft} seconds left`;
 
         if (timeLeft <= 0) {
-            clearInterval(interval);
-            alert('Time is up!');
+            clearInterval(timerInterval);
             endQuiz();
         }
 
@@ -165,21 +164,40 @@ function selectAnswer(e){
 
 
 
-function endQuiz() {
+  function endQuiz() {
     clearInterval(timerInterval);
     questions.style.display = 'none';
 
     const endScreen = document.getElementById("end-screen");
     endScreen.style.display = "block";
-    finalScore.innerHTML = timeLeft; // Corrected variable name
+    finalScore.innerHTML = timeLeft;
 
     initialsInput.addEventListener("input", function() {
-        // Handle user input (if needed)
     });
 
     submitButton.addEventListener("click", function() {
-    });
-}
+        const playerInitials = initialsInput.value.trim();
+        if (playerInitials !== "") {
+            const scoreData = {
+                playerInitials: playerInitials,
+                score: timeLeft
+            };
+
+             // Clear the "highScores" key
+             localStorage.removeItem("highScores");
+            
+             const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+             highScores.push(scoreData);
+             highScores.sort((a, b) => b.score - a.score);
+             localStorage.setItem("highScores", JSON.stringify(highScores));
+ 
+             window.location.href = "highscores.html";
+         } else {
+             alert("Initials cannot be blank.");
+         }
+     });
+ }
+ 
 
       
 function showNextQuestion() {
@@ -191,12 +209,11 @@ function showNextQuestion() {
     }
 }
 
-startButton.addEventListener('click', startQuiz);
+
+
+startButton.addEventListener("click", startQuiz);
 
 
 
-// User submits form
-  // Initials and score get stored in local storage
-  // User is taken to the high scores page
-  // High scores are listed, sorted highest to lowest
-  // User has option to take the quiz again
+//   highScoresList.innerHTML = highScores.map(score => `<li>${score.initials}: ${score.score}</li>`).join("");
+
