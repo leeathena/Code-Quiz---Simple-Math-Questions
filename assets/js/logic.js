@@ -195,6 +195,7 @@ function showNextQuestion() {
 // Click the start button to start quiz
 
 startButton.addEventListener("click", startQuiz);
+console.log("start quiz")
 
 
 
